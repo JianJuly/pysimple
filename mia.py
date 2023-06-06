@@ -6,6 +6,27 @@ import numpy as np
 import SimpleITK as sitk
 import cv2
 
+
+def get_bbox(sio_img, sio_roi):
+    filter = sitk.LabelStatisticsImageFilter()
+    filter.Execute(sio_img, sio_roi)
+    bounding_box = filter.GetBoundingBox(1)
+
+    bbox = {
+        'sag': sio_img.GetWidth(),
+        'cor': sio_img.GetHeight(),
+        'axi': sio_img.GetDepth(),
+        'bbx_sag_min': bounding_box[0],
+        'bbx_sag_max': bounding_box[1],
+        'bbx_cor_min': bounding_box[2],
+        'bbx_cor_max': bounding_box[3],
+        'bbx_axi_min': bounding_box[4],
+        'bbx_axi_max': bounding_box[5],
+    }
+
+    return bbox
+
+
 def image_resample(img, ref=None, spacing_new=(1.0, 1.0, 5.0), is_label=False):
     '''
 
